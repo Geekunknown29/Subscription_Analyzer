@@ -270,6 +270,21 @@ Main explanation file:
 
 ```text
 explanation.md
-```
 
 The explanation file contains the project reasoning, class imbalance discussion, EDA insights, feature importance interpretation, metric choice, and sample prediction analysis.
+```
+
+
+RESULTS :
+| Model               | Accuracy | Precision | Recall |     F1 |
+| ------------------- | -------: | --------: | -----: | -----: |
+| Logistic Regression |   84.60% |    41.86% | 81.38% | 55.28% |
+| XGBoost             |   89.73% |    54.40% | 75.43% | 63.21% |
+| CatBoost            |   89.73% |    54.40% | 75.43% | 63.21% |
+
+
+EDA :
+<img width="1000" height="500" alt="job_subscription_rate" src="https://github.com/user-attachments/assets/d600a25d-84e1-4d1d-b5cc-fba4d967e5f1" />
+<img width="600" height="400" alt="housing_subscription" src="https://github.com/user-attachments/assets/72da0851-f2aa-4a31-8b7a-86fdeb4be6ef" />
+<img width="600" height="400" alt="class_distribution" src="https://github.com/user-attachments/assets/d6b41f40-63bc-4b1c-b49c-6c641d3d3d60" />
+<img width="600" height="400" alt="age_group_subscription" src="https://github.com/user-attachments/assets/db37b082-d4e9-42c2-ae4d-c33f863fd2c3" />
