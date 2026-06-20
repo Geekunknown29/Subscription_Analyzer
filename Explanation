@@ -1,4 +1,4 @@
-#EXPLANATION.md
+#EXPLANATION
 
 #Question 1 ) What percentage of customers in your dataset have y = yes? What does this imbalance mean for how you'd evaluate a model?
 in the given dataset i found a very huge imbalance between the people who subscribed and those who did not subscribed. 
