@@ -1,13 +1,12 @@
-# Logistic Regression V3
-# Uses class balancing and threshold = 0.7
-# Saves model, scaler and 5 representative customer predictions
+# Final CatBoost Model
+# Uses best hyperparameters and threshold = 0.7
+# Saves final model and 5 representative customer predictions
 
 import pandas as pd
 import pickle
 import os
 
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
+from catboost import CatBoostClassifier
 
 from sklearn.metrics import (
     accuracy_score,
@@ -19,7 +18,7 @@ from sklearn.metrics import (
 )
 
 # =========================
-# Create Folders
+# Create Folders if Needed
 # =========================
 
 os.makedirs(
@@ -44,63 +43,38 @@ X_train = train_df.drop("y", axis=1)
 y_train = train_df["y"]
 
 # =========================
-# Scale Features
+# Final CatBoost
 # =========================
 
-scaler = StandardScaler()
-
-X_train_scaled = scaler.fit_transform(
-    X_train
+cat_final = CatBoostClassifier(
+    iterations=500,
+    depth=5,
+    learning_rate=0.03,
+    class_weights=[1, 7],
+    loss_function="Logloss",
+    eval_metric="F1",
+    random_seed=42,
+    verbose=0
 )
 
-# =========================
-# Logistic Regression V3
-# =========================
-
-lr_v3 = LogisticRegression(
-    max_iter=5000,
-    random_state=42,
-    class_weight="balanced"
-)
-
-lr_v3.fit(
-    X_train_scaled,
+cat_final.fit(
+    X_train,
     y_train
 )
 
-print(
-    "Balanced Logistic Regression trained successfully"
-)
+print("Final CatBoost trained successfully")
 
 # =========================
 # Save Model
 # =========================
 
 with open(
-    r"D:\Projects\bankmind-Arpit\models\logistic_regression_v3.pkl",
+    r"D:\Projects\bankmind-Arpit\models\final_catboost.pkl",
     "wb"
 ) as file:
-    pickle.dump(
-        lr_v3,
-        file
-    )
+    pickle.dump(cat_final, file)
 
-# =========================
-# Save Scaler
-# =========================
-
-with open(
-    r"D:\Projects\bankmind-Arpit\models\scaler_v3.pkl",
-    "wb"
-) as file:
-    pickle.dump(
-        scaler,
-        file
-    )
-
-print(
-    "Model and scaler saved successfully"
-)
+print("Model saved successfully")
 
 # =========================
 # Load Test Data
@@ -110,28 +84,14 @@ test_df = pd.read_csv(
     r"D:\Projects\bankmind-Arpit\data\test_data.csv"
 )
 
-X_test = test_df.drop(
-    "y",
-    axis=1
-)
-
+X_test = test_df.drop("y", axis=1)
 y_test = test_df["y"]
-
-# =========================
-# Scale Test Data
-# =========================
-
-X_test_scaled = scaler.transform(
-    X_test
-)
 
 # =========================
 # Predict Probabilities
 # =========================
 
-y_prob = lr_v3.predict_proba(
-    X_test_scaled
-)[:, 1]
+y_prob = cat_final.predict_proba(X_test)[:, 1]
 
 # =========================
 # Apply Threshold
@@ -147,67 +107,21 @@ y_pred = (
 # Metrics
 # =========================
 
-print(
-    "\nThreshold =",
-    THRESHOLD
-)
+print("\nThreshold =", THRESHOLD)
 
-print(
-    "\nAccuracy :",
-    accuracy_score(
-        y_test,
-        y_pred
-    )
-)
+print("\nAccuracy :", accuracy_score(y_test, y_pred))
+print("Precision:", precision_score(y_test, y_pred))
+print("Recall   :", recall_score(y_test, y_pred))
+print("F1 Score :", f1_score(y_test, y_pred))
 
-print(
-    "Precision:",
-    precision_score(
-        y_test,
-        y_pred
-    )
-)
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
 
-print(
-    "Recall   :",
-    recall_score(
-        y_test,
-        y_pred
-    )
-)
-
-print(
-    "F1 Score :",
-    f1_score(
-        y_test,
-        y_pred
-    )
-)
-
-print(
-    "\nConfusion Matrix:"
-)
-
-print(
-    confusion_matrix(
-        y_test,
-        y_pred
-    )
-)
-
-print(
-    "\nClassification Report:"
-)
-
-print(
-    classification_report(
-        y_test,
-        y_pred
-    )
-)
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
 
 # =========================
-# Build Results DataFrame
+# Build Prediction Table
 # =========================
 
 results_df = X_test.copy()
@@ -220,10 +134,10 @@ results_df["Prediction"] = y_pred
 # Select 5 Customers
 # =========================
 
+# 2 strongest YES predictions
+
 strong_yes = (
-    results_df[
-        results_df["Prediction"] == 1
-    ]
+    results_df[results_df["Prediction"] == 1]
     .sort_values(
         by="Probability",
         ascending=False
@@ -231,10 +145,10 @@ strong_yes = (
     .head(2)
 )
 
+# 2 strongest NO predictions
+
 strong_no = (
-    results_df[
-        results_df["Prediction"] == 0
-    ]
+    results_df[results_df["Prediction"] == 0]
     .sort_values(
         by="Probability",
         ascending=True
@@ -242,11 +156,12 @@ strong_no = (
     .head(2)
 )
 
+# 1 borderline customer closest to threshold
+
 borderline = (
     results_df.assign(
         Distance=abs(
-            results_df["Probability"]
-            - THRESHOLD
+            results_df["Probability"] - THRESHOLD
         )
     )
     .sort_values(
@@ -258,6 +173,10 @@ borderline = (
     )
 )
 
+# =========================
+# Combine Customers
+# =========================
+
 sample_customers = pd.concat(
     [
         strong_yes,
@@ -267,34 +186,25 @@ sample_customers = pd.concat(
 )
 
 # =========================
-# Save 5 Customers
+# Save Sample Predictions
 # =========================
 
 sample_customers.to_csv(
-    r"D:\Projects\bankmind-Arpit\results\lr_sample_predictions.csv",
+    r"D:\Projects\bankmind-Arpit\results\sample_predictions.csv",
     index=True
 )
 
+print("\n5 sample customers saved successfully.")
 print(
-    "\n5 Logistic Regression customers saved successfully."
-)
-
-print(
-    "File saved at:"
-)
-
-print(
-    r"D:\Projects\bankmind-Arpit\results\lr_sample_predictions.csv"
+    "File saved at: "
+    r"D:\Projects\bankmind-Arpit\results\sample_predictions.csv"
 )
 
 # =========================
 # Preview Customers
 # =========================
 
-print(
-    "\nSelected Customers:"
-)
-
+print("\nSelected Customers:")
 print(
     sample_customers[
         [
