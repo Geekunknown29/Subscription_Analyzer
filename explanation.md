@@ -1,16 +1,16 @@
 #EXPLANATION
 
 #Question 1 ) What percentage of customers in your dataset have y = yes? What does this imbalance mean for how you'd evaluate a model?
-in the given dataset i found a very huge imbalance between the people who subscribed and those who did not subscribed. 
-exact figures were as following :- 
+in the given dataset i found a very huge imbalance between the people who subscribed and those who did not subscribed.
+exact figures were as following :-
   yes : 5,289        -> 11.70%
   no  : 39,922       -> 88.30%
   total entries in raw data : 45,211
-this class bias was huge and to handle it required alot of brainstorming at first but eventually figured out a way to make the things work . First i chose the baseline model Logistic Regression which was 
+this class bias was huge and to handle it required alot of brainstorming at first but eventually figured out a way to make the things work . First i chose the baseline model Logistic Regression which was
 compulsary to be done. the results were a little misleading as the accuracy = 89.86, precision = 63.53, recall = 31.29 and f1 = 41.93. Accuracy and precision were really good but they were misleading because the True positives were only 331.
 in short that meant model was good at predicting if we submit it as a project but for industry level use case it was waste because it meant it could not identify enough customers who will subscribe and for those whom are found, we have to waste alot of calls.
 this thing happened because of class bias.
-to solve this issue i rather went out of the project description and trained 3 models (Random Forest, XG Boost, CatBoost) along with Logistic regression to find and experiment on how to make it a reall industry level tool. 
+to solve this issue i rather went out of the project description and trained 3 models (Random Forest, XG Boost, CatBoost) along with Logistic regression to find and experiment on how to make it a reall industry level tool.
 
 
 
@@ -18,7 +18,7 @@ to solve this issue i rather went out of the project description and trained 3 m
 From the analysis of the RAW data i found that the student category had the highest subscription rate of 28.68%, followed by retired customers of 22.79%.
 The results were quite interesting because students are not usually considered the wealthiest customer segment and the least likely to be engaged in things such as loans and subscriptions.
 However, when i further trained moels and found the results, i noticed the pattern that the set of categories were making sense somehow because they can't spend much because they are not earning. in order to have more finds to invest makes sense.
-and when things were off for me thats when i realized why we are working on this problem. 
+and when things were off for me thats when i realized why we are working on this problem.
 The second-highest category, retired customers, made intuitively much more sense to me. Retired individuals generally prefer loweer financial risks and are often more focused on preserving their savings rather than taking aggressive investment risks.
 Since term deposits provide stability and predictable returns, they naturally appeal to this customer group.
 On the other hand, categories such as blue-collar workers and entrepreneurs showed much lower subscription rates. One possible reason is that these groups may either have tighter financial constraints or prefer keeping their money available for day-to-day business and personal expenses rather than locking it into a term deposit.
