@@ -4,6 +4,20 @@ BankMind is a machine learning project built on the Bank Marketing dataset. The 
 
 The project compares a required baseline Logistic Regression model with stronger tree-based models, including Random Forest, XGBoost, and CatBoost. The final selected model is CatBoost because it gives a better balance between precision and recall for identifying real subscribers.
 
+## EXPERIMENTATION :
+In this repository, you can find the three final models that performed best after the complete analysis process. To understand the full experimentation workflow, model tuning process, threshold analysis, and intermediate results, please refer to the `extra_experiments.zip` archive included in the repository.
+
+## RESULTS :
+| Model               | Accuracy | Precision | Recall |     F1 |
+| ------------------- | -------: | --------: | -----: | -----: |
+| Logistic Regression |   84.60% |    41.86% | 81.38% | 55.28% |
+| XGBoost             |   90.70% |    59.02% | 67.11% | 62.80% |
+| CatBoost            |   89.73% |    54.40% | 75.43% | 63.21% |
+
+
+both XGBoost and CatBoost had threshold 0.7
+CatBoost was selected as the final model because it achieved the best balance between subscriber identification (Recall) and unnecessary outreach reduction (Precision), resulting in the strongest overall F1-score among the evaluated models.
+
 ## Project Structure
 
 ```text
@@ -275,15 +289,8 @@ The explanation file contains the project reasoning, class imbalance discussion,
 ```
 
 
-RESULTS :
-| Model               | Accuracy | Precision | Recall |     F1 |
-| ------------------- | -------: | --------: | -----: | -----: |
-| Logistic Regression |   84.60% |    41.86% | 81.38% | 55.28% |
-| XGBoost             |   89.73% |    54.40% | 75.43% | 63.21% |
-| CatBoost            |   89.73% |    54.40% | 75.43% | 63.21% |
 
-
-EDA :
+## EDA :
 <img width="1000" height="500" alt="job_subscription_rate" src="https://github.com/user-attachments/assets/d600a25d-84e1-4d1d-b5cc-fba4d967e5f1" />
 <img width="600" height="400" alt="housing_subscription" src="https://github.com/user-attachments/assets/72da0851-f2aa-4a31-8b7a-86fdeb4be6ef" />
 <img width="600" height="400" alt="class_distribution" src="https://github.com/user-attachments/assets/d6b41f40-63bc-4b1c-b49c-6c641d3d3d60" />
